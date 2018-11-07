@@ -1,0 +1,11 @@
+reset
+set terminal gif
+set output fn_out_gif
+
+set ylabel "T_{int}, K"
+set xlabel "CW, arcmin"
+
+plot fn_in using 1:2:($2-$3):($2+$3) with yerrorlines notitle
+
+reset
+

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+FREQ=$1
+FWHM=$2
+
+echo "0 0 0 5 5 35 35 60 60" > fwhm_line
+
+fileiin='./res/extract_extract'
+
+cat fwhm_line $fileiin > tmp && mv tmp filein
+
+#deleting first column
+awk '{$1 = ""; print $i}' filein > tmp 
+awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > './res/flux'
+num=$( cat './res/flux' | wc -l )
+echo $num
+awk '{$1 = ""; $2 = ""; print $i}' filein > tmp
+awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > './res/flux_err'
+
+python file_rotate.py './res/flux' './res/rotated_flux' './res/flux_err' './res/rotated_flux_err'
+awk 'FNR==NR{a[$1]=$2;next} ($1 in a) {print $1,$2,a[$1]}' './res/rotated_flux' './res/rotated_flux_err' > './res/res'	
+
+fn_in='./res/res'	
+fn_out_gif='./res/res.gif'
+gnuplot -e "fn_in='$fn_in'" -e "fn_out_gif='$fn_out_gif'" graph
+
+rm filein
+

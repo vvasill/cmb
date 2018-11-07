@@ -1,0 +1,15 @@
+#!/bin/bash
+
+FREQ=$1
+FWHM=$2
+
+echo "0 0 0 5 5 35 35 60 60" > fwhm_line
+
+for fr in $FREQ
+do	
+	outfile='./res/extract_'$fr
+	> $outfile
+	./join_all.sh './in_data/calib_'$fr'_60' './in_data/calib_'$fr'_35' './in_data/calib_'$fr'_5' './in_data/calib_'$fr'_0' > $outfile
+done
+
+./join_all.sh './res/extract_030' './res/extract_044' './res/extract_070' './res/extract_100' './res/extract_143' './res/extract_217' > './res/extract'

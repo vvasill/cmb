@@ -1,0 +1,13 @@
+reset
+set terminal gif
+set output fn_out_gif
+
+set ylabel "lg T_{int}, K"
+set xlabel "CW, arcmin"
+
+set logscale y
+
+#plot fn_in using 1:2:($2-$3):($2+$3) with yerrorlines notitle
+plot for [i=2:num] fn_in using 1:i with lines notitle
+
+reset
