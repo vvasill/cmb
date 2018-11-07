@@ -1,6 +1,4 @@
 GLESP
 SExtractor
 gnuplot
-numpy
-matplotlib
-scipy
+python packages: numpy, matplotlib, scipy
