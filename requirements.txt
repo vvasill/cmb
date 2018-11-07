@@ -1,2 +1,6 @@
 GLESP
-python
+SExtractor
+gnuplot
+numpy
+matplotlib
+scipy
