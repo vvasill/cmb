@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#> /dev/null 2>&1
+
+path=../../p2/maps/
+
+LFREC="030"
+beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077"
+FWHM="0"
+
+echo preparing...
+#./Planck_list_prepare.sh
+echo def_coords...
+#./def_coords.sh "$path" "$FWHM"
+echo cutting...
+./calib_prepare.sh $path "$LFREC" "$FWHM" "$beamwidth"
+#./calib_repair.sh "$LFREC" "$FWHM"
+echo spot_matching
+#./spot_matching.sh "$LFREC" "$FWHM" "$beamwidth"
+echo joining...
+#./joining.sh

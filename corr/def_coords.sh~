@@ -1,0 +1,46 @@
+#!/bin/bash
+
+LFREQ=$1
+FWHM=$2
+sigma=1.0
+delta=1.0
+
+cd ./def_coords
+
+for fr in $LFREQ
+do
+	for fw in $FWHM
+	do
+		MAP='./maps/mos_corr_'$fr'_'$fw'.fts'
+
+		output_file='coords_'$fr'_'$fw
+		> $output_file
+			 
+		cat ../big_areas_list | grep -v '^#' | while read areas_line
+		do 
+			str1=( $areas_line )
+			i=${str1[0]}
+			echo "freq: $fr big area: $i FWHM: $fw"
+			
+			echo $delta
+			count_area=0
+			num=$( python -c 'import sys; print int(20.0 / float(sys.argv[1]))' $delta )
+			sq=$( python -c 'import sys; print int(20.0**2 / float(sys.argv[1])**2)' $delta )
+			while [ $count_area -lt $sq ]
+			do
+				small_in_big_name=$fr'_'$fw'_'$i'_'$count_area
+				coord_line=$( python ../get_coord.py $small_in_big_name $i $count_area $delta $num)
+				echo $coord_line >> coord_line$$
+				cat coord_line$$ | tail -1 > coord$$
+				
+				mapcut ${!MAP} -fzq1 coord$$ -zd $delta'd' -stat >> $output_file
+				cat coord$$ >> $output_file
+				(( count_area++ ))
+			done
+		done
+	done
+done
+
+#empty_trash
+if [ -f coord_list$$ ]; then rm coord_list$$; fi
+
