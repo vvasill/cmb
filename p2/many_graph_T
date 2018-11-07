@@ -1,0 +1,28 @@
+reset
+set terminal gif
+set output fn_out_gif
+
+set ylabel y_label
+set xlabel "f, MHz"
+
+set logscale x
+
+plot fn_in using 1:2:($2-$3):($2+$3) with yerrorbars pt 7 ps 0.5 notitle
+
+reset
+set terminal postscript eps enhanced dl 1.5 font 'Helvetica, 18' size 3.0, 2.0
+set output fn_out_eps_wb
+
+set ylabel "{/Helvetica-Italic T}, K"
+set xlabel "{/Helvetica-Italic f}, MHz"
+
+set style line 1 lc -1 lw 2.0
+set style line 2 lc -1 dt (5.5, 4, 5.5, 4) lw 2.0
+set logscale x
+
+#plot fn_in using 1:2:($2-$3):($2+$3) with yerrorbars pt 7 ps 0.5 notitle
+
+set style fill transparent solid 0.2 noborder
+plot fn_in using 1:($2-$3):($2+$3) with filledcurves notitle, fn_in using 1:2 with lp lt 1 pt 7 ps 0.5 lw 1 notitle
+
+reset
