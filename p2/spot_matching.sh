@@ -11,7 +11,7 @@ BW_str=( $beamwidth )
 sigma=1.0
 factor=1.5
 
-if [ ! -f ./match	 ]; then mkdir ./match; fi
+if [ ! -f ./match ]; then mkdir ./match; fi
 cd ./match	
 
 for fw in $FWHM
@@ -38,13 +38,14 @@ do
 			fi
 			
 			infile_1='../big_areas/source_lists/big_area_sources_'$i'_'$fr'_'$fw
-			outfile='outfile_'$i'_'$fr'_'$fw
+			if [ "$mode" == "S" ]; then outfile='S_outfile_'$i'_'$fr'_'$fw; fi 
+			if [ "$mode" == "T" ]; then outfile='T_outfile_'$i'_'$fr'_'$fw;	fi
 			> $outfile
 			echo $i'_'$fr'_'$fw
 		
 			#loop_on_spots from smica
 			cat $infile_2 | grep -v 'corr_'$fr | while read coord_line
-			do   
+			do  
 				> temp_outfile
 				str2=( $coord_line )	
 				spot_num=${str2[0]}
@@ -56,10 +57,11 @@ do
 				dec_l=$( echo $dec - $delta_small | bc -l )
 				dec_r=$( echo $dec + $delta_small | bc -l )
 				
+				#checking, if source (from sources on big areas) is included in small_area (across spot on smica map)
 				awk -v ra=$ra -v dec=$dec -v ra_l=$ra_l -v ra_r=$ra_r -v dec_l=$dec_l -v dec_r=$dec_r -v spot_num=$spot_num '{if ($4 > ra_l && $4 < ra_r && $5 > dec_l && $5 < dec_r) {printf "%s %s %s %s %s\n", spot_num, $2, $3, ra, dec}}' $infile_1 >> temp_outfile
 									
 				if [ -s temp_outfile ]; then
-					#some output_file_modifications: merging if more than one peacks on one spot
+					#some output_file_modifications: merging if more than one peaks on one spot
 					cat temp_outfile | ( 
 						t=0
 						t_err=0
@@ -69,14 +71,20 @@ do
 							name=${str3[0]}	
 							dt=${str3[1]}
 							dt_err=${str3[2]}	
-							if [ "$mode" == "av" ]
-							then
-								t=$(echo $t + $dt | bc)
-								t_err=$(echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
-							else
+
+							if [ "$mode" == "S" ]
+							then	
+								### sum all peaks ###
+								t=$( echo $t + $dt | bc )
+								t_err=$( echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
+							fi
+							if [ "$mode" == "T" ]
+							then	
+								### find maximum ###
 								if (( $( echo $dt '>' $t | bc -l ) )); then t=$dt; fi
 								t_err=$dt_err
 							fi
+
 						done	
 						echo $name' '$t' '$t_err' '$ra' '$dec >> $outfile
 					)	

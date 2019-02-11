@@ -1,16 +1,34 @@
 #!/bin/bash
 
-fw=5
-rlim=0.0004
-llim=0.00015
-step=0.00005
+mode="S"
+fw=35
+#rlim=0.00045
+#llim=0.0001
+#step=0.0001
 
-fn_in='./res/'$fw
-fn_out_eps_wb='./graphs/a_'$fw'_wb.eps'
+rlim=100
+llim=0
+step=20
 
-gnuplot -e "fn_out_png='$fn_out_png'" -e "fn_out_eps_wb='$fn_out_eps_wb'" -e "fn_in='$fn_in'" -e "num='$num'" -e "y_label='$y_label'" -e "rlim='$rlim'" -e "llim='$llim'" -e "step='$step'" many_graph_man
+if [ "$mode" == "T" ]
+then
+	fn_in='./res/T_'$fw
+	fn_out_eps_wb='./graphs/T_'$fw'_wb.eps'
+	y_label='{/Helvetica-Italic T}, K'
 
-cp $fn_out_eps_wb ../text/images/
-cd ../text
-pdflatex text.tex
+	gnuplot -e "fn_out_eps_wb='$fn_out_eps_wb'" -e "fn_in='$fn_in'" -e "y_label='$y_label'" -e "rlim='$rlim'" -e "llim='$llim'" -e "step='$step'" many_graph_man
+fi
+
+if [ "$mode" == "S" ]
+then
+	fn_in='./res/S_'$fw
+	fn_out_eps_wb='./graphs/S_'$fw'_wb.eps'
+	y_label='{/Helvetica-Italic S}, Ja'
+
+	gnuplot -e "fn_out_eps_wb='$fn_out_eps_wb'" -e "fn_in='$fn_in'" -e "y_label='$y_label'" -e "rlim='$rlim'" -e "llim='$llim'" -e "step='$step'" many_graph_man
+fi
+
+#cp $fn_out_eps_wb ../text/images/
+#cd ../text
+#pdflatex text.tex
 

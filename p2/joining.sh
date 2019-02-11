@@ -1,22 +1,43 @@
 #!/bin/bash
 
 FWHM=$1
+mode=$2
+
 echo "0 30 30 40 40 70 70 100 100 143 143 217 217" > freq_line
 if [ ! -f ./res ]; then mkdir ./res; fi
+if [ "$mode" == "T" ]
+then
+	infile='./match/T_calib_outfile'
+	outfile='./res/T_res_'
+	out='./res/T_flux_'
+fi
+if [ "$mode" == "S" ]
+then
+	infile='./match/S_calib_outfile'
+	outfile='./res/S_res_'
+	out='./res/S_flux_'
+fi
 
 for fw in $FWHM
 do
-	> './res/res_'$fw
-	./join_all.sh ./match/calib_outfile_217_$fw ./match/calib_outfile_143_$fw ./match/calib_outfile_100_$fw ./match/calib_outfile_070_$fw ./match/calib_outfile_044_$fw ./match/calib_outfile_030_$fw > './res/res_'$fw
-
-	cat freq_line './res/res_'$fw > tmp && mv tmp './res/res_'$fw
+	> $outfile$fw
 	
-	#deleting first column
-	awk '{$1 = ""; print $i}' './res/res_'$fw > tmp 
-	awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > './res/flux_'$fw
-	num=$( cat './res/flux_'$fw | wc -l )
-	echo $num
-	awk '{$1 = ""; $2 = ""; print $i}' './res/res_'$fw > tmp
-	awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > './res/flux_err_'$fw
+	#joining
+	./join_all.sh $infile'_217_'$fw $infile'_143_'$fw $infile'_100_'$fw $infile'_070_'$fw $infile'_044_'$fw $infile'_030_'$fw > $outfile$fw
+
+	#adding line with freqs
+	cat freq_line $outfile$fw > tmp && mv tmp $outfile$fw
+	
+	#deleting first column and extracting columns for fluxes
+	awk '{$1 = ""; print $i}' $outfile$fw > tmp 
+	awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > $out$fw
+
+	#deleting first column and extracting columns for fluxes
+	awk '{$1 = ""; $2 = ""; print $i}' $outfile$fw > tmp
+	awk '{for (i=1; i<=NF; i++) if (i % 2) printf "%s", $i (i == NF || i == (NF-1)?"\n":" ")}' tmp > $out'err_'$fw
+
 done
 
+#empty_trash
+if [ -f freq_line ]; then rm freq_line; fi	
+if [ -f tmp ]; then rm tmp; fi	

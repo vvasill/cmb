@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# > /dev/null 2>&1
-
 FREQ="030 044 070 100 143 217"
 FWHM="0 5 35 60"
 beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077"
@@ -22,7 +20,7 @@ echo cutting...
 
 if [ "$1" == "a" ] 
 then
-	echo "alternartive source extracting..."
+	echo "alternartive (max amplitude) source extracting..."
 #	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
 else
 	echo sextracting...
@@ -34,19 +32,19 @@ fi
 if [ "$1" == "a" ] 
 then
 	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" max
+#	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T
 else
 	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" av
+	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S
 fi
 
 if [ "$1" == "a" ] 
 then
 	echo calibrating...
-	./calibrating.sh "$FREQ" "$FWHM" "$home_path" no
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T
 else
 	echo calibrating...
-	./calibrating.sh "$FREQ" "$FWHM" "$home_path" with
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S
 fi
 
 ### joining ###
@@ -58,18 +56,19 @@ else
 	./joining.sh "$FWHM" S
 fi
 
+### rotating and graphing ###
 echo rotating and graphing...
 if [ "$1" == "a" ] 
 then
-	./rotate.sh "$FWHM" T "$home_path"
+	./rotate_graph.sh "$FWHM" T "$home_path"
 else
-	./rotate.sh "$FWHM" S "$home_path"
+	./rotate_graph.sh "$FWHM" S "$home_path"
 fi
 
-### graphing ###
+### graphing... ###
 #./graph_man.sh
 
-echo latexing...
-cp ./graphs/*.eps ../text/images/
-cd ../text
-pdflatex text.tex
+#echo latexing...
+#cp ./graphs/*.eps ../text/images/
+#cd ../text
+#pdflatex text.tex

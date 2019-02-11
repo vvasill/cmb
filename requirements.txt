@@ -1,4 +1,4 @@
 GLESP
 SExtractor
 gnuplot
-python packages: numpy, matplotlib, scipy
+python packages: numpy, matplotlib, scipy, astropy
