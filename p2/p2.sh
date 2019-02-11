@@ -20,7 +20,7 @@ echo cutting...
 
 if [ "$1" == "a" ] 
 then
-	echo "alternartive (max amplitude) source extracting..."
+	echo "alternative (max amplitude) source extracting..."
 #	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
 else
 	echo sextracting...
