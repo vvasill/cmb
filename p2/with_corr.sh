@@ -4,8 +4,8 @@ FREQ=$1
 FWHM=$2
 beamwidth=$3
 home_path=$4
-eps=$5
-mode=$6
+mode=$5
+eps=$6
 
 BW_str=( $beamwidth )
 sigma=1.0
@@ -51,11 +51,12 @@ do
 					dec=${str2[4]}
 					ra_mc=$(echo $( python ../mc_coord.py $ra $dec ) | cut -d' ' -f1)
 					dec_mc=$(echo $( python ../mc_coord.py $ra $dec ) | cut -d' ' -f2)
+					map=$home_path'/maps/corr_maps/mos_corr_'$fr'_'$fw'.fts'
 									
 					#checking corr_map
 					echo $i'_'$fr'_'$fw'_'$spot_num' '$ra_mc' '$dec_mc > corr_check_coord	
-					mapcut $home_path'/maps/corr_maps/mos_corr_'$fr'_'$fw'.fts' -fzq1 corr_check_coord -zd $delta_small'd' -stat > corr_check
-					f2fig $home_path'/maps/corr_maps/mos_corr_'$fr'_'$fw'.fts' -fzq1 corr_check_coord -zd $delta_small'd' > /dev/null 2>&1
+					mapcut $map -fzq1 corr_check_coord -zd $delta_small'd' -stat > corr_check
+					f2fig $map -fzq1 corr_check_coord -zd $delta_small'd' > /dev/null 2>&1
 										
 					corr_check_line=$( cat corr_check | tail -1 )
 					check_str=( $corr_check_line )
@@ -75,9 +76,9 @@ do
 				(( count++ ))
 			done
 			cat tmpfile > $outfile
-		else
-			 awk '{ printf "%s yes\n", $0 }' $infile > $outfile
 		fi
+
+		if [ "$mode" == "no" ]; then awk '{ printf "%s yes\n", $0 }' $infile > $outfile; fi
 	done
 done
 
