@@ -4,9 +4,9 @@ FREQ=$1
 FWHM=$2
 home_path=$3
 
-if [ -f calib_res ]; then > calib_res; fi
+> calib_res
 if [ ! -f graphs ]; then mkdir graphs; fi
-> skiped_names_00
+> ./out_data/skipped_names_00
 
 for fr in $FREQ
 do	
@@ -17,11 +17,12 @@ do
 		fn_out_gif='./graphs/'$fr'_'$fw'.gif'
 		fn_out_eps_wb='./graphs/'$fr'_'$fw'_wb.eps'
 
+		#reject nulls
 		grep -v " 0.0 0.0 " $file_name > tmp 
-		grep " 0.0 0.0 " $file_name > skiped_names_00
+		grep " 0.0 0.0 " $file_name >> ./out_data/skipped_names_00
 		mv tmp $file_name
 		grep -v " 0 0 " $file_name > tmp 
-		grep " 0 0 " $file_name > skiped_names_00
+		grep " 0 0 " $file_name >> ./out_data/skipped_names_00
 		mv tmp $file_name
 		
 		awk '{print $4}' $file_name > flux
@@ -31,6 +32,7 @@ do
 		#awk '{print $3}' $file_name > temp_err
 		#python stat.py ./temp ./flux ./temp_err ./flux_err $a $b $file_name_extra
 
+		#reject some points with small flux and large temp
 		max_flux=$( awk -F= 'BEGIN { max = -inf } { if ($1 > max) { max = $1 } } END { print max }' flux )
 		max_temp=$( awk -F= 'BEGIN { max = -inf } { if ($1 > max) { max = $1 } } END { print max }' temp )
 		num=$( cat $file_name | wc -l )

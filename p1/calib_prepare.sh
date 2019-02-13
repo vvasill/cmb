@@ -17,15 +17,19 @@ home_path=$4
 
 factor=1.5
 sigma=1.0
+outfile='../out_data/calib_data_'$fr'_'$fw	
 
+> ./out_data/skipped_names
+> ./out_data/small_areas_sources
+if [ ! -f ./out_data ]; then mkdir ./out_data; fi
+if [ ! -f ./small_areas ]; then mkdir ./small_areas; fi
 cd ./small_areas
-> ../skiped_names
-> ../small_areas_sources
 
 #loop_on_freq
 count=0
 for fr in $FREQ
 do
+	#loop_on_smoothing_angles
 	for fw in $FWHM
 	do
 		#set a size of small area for current fw/freq and map/smoothed map
@@ -40,6 +44,7 @@ do
 		fi
 		echo $delta
 
+		#set path to current map
 		case $fw in
 		0)
 			MAP='M'$fr;;
@@ -57,13 +62,15 @@ do
 			area_num='area_'$i'.0'
 			echo "freq: $fr big area: $i FWHM: $fw"
 
-			#sources_info_extracting
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v f=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, f, fw, $3, $4}' > coord_list$$
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v f=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, f, fw, ($8*15.0), $9}' > another_coord_list$$
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v f=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, f, fw, $6, $7}' >> flux_list$$
+			#sources_info_extracting: coords, coords in decimal format, fluxes
+			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $3, $4}' > coord_list$$
+			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, ($8*15.0), $9}' > decimal_coord_list$$
+			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $6, $7}' > flux_list$$
 			echo 'sources are available: '$(cat coord_list$$ | wc -l )
 
-			#loop_on_sources			
+			#loop_on_sources		
+
+			#cutting small areas	
 			cat coord_list$$ | while read line
 			do
 				echo $line > coord_line$$
@@ -71,7 +78,8 @@ do
 				mapcut ${!MAP} -fzq1 coord_line$$ -zd $delta'd' > /dev/null 2>&1
 			done
 
-			cat another_coord_list$$ | while read line
+			#extracting integral temperatures
+			cat decimal_coord_list$$ | while read line
 			do
 				#coords and names def
 				echo $line > coord_line$$
@@ -85,7 +93,7 @@ do
 				sex $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
 
 				#list of all sextractions
-				cat sex_output >> ../small_areas_sources
+				cat sex_output >> ../out_data/small_areas_sources
 				#avoiding problems with exponential format
 				awk 'BEGIN{CONVFMT="%.9f"}{for(i=1; i<=NF; i++)if($i~/^[0-9]+([eE][+-][0-9]+)?/)$i+=0;}1' sex_output > tmp && mv tmp sex_output 
 				sed -i -e 's/+//g' sex_output
@@ -95,6 +103,7 @@ do
 				cat sex_output | ( 
 					t=0
 					t_err=0
+
 					while read sex_line
 					do
 						str=( $sex_line )		
@@ -108,23 +117,23 @@ do
 						if (( $( echo $len1'<'$len2 | bc -l ) ))
 						then
 							t=$(echo $t + $dt | bc)
-							t_err=$(echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l)
+							t_err=$( echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
 						else 
-							echo $name' skipped' >> ../skiped_names
+							echo $name >> ../out_data/skipped_names
 						fi
 					done	
+	
 					echo $name' '$t' '$t_err >> calib_data$$
 				)
 				fi
 			done
 		done
 
-		#merging sex_output and Planck_fluxes in one file
-		awk 'FNR==NR{a[$1]=$2;b[$1]=$3;next} ($1 in a) {print $0,a[$1],b[$1]}' flux_list$$ calib_data$$ > ../out_data/'calib_data_'$fr'_'$fw	
+		#merging Planck_fluxes and sextractor output in one file
+		awk 'FNR==NR{a[$1]=$2;b[$1]=$3;next} ($1 in a) {print $0,a[$1],b[$1]}' flux_list$$ calib_data$$ > $outfile
 	
 		#empty files for new freq
 		> calib_data$$
-		> flux_list$$
 	done
 	(( count++ ))
 done
@@ -132,7 +141,7 @@ done
 #empty_trash
 if [ -f coord_list$$ ]; then rm coord_list$$; fi
 if [ -f coord_line$$ ]; then rm coord_line$$; fi
-if [ -f coord_line$$ ]; then rm another_coord_list$$; fi
+if [ -f decimal_coord_list$$ ]; then rm decimal_coord_list$$; fi
 if [ -f flux_list$$ ]; then rm flux_list$$; fi
 if [ -f sex_output ]; then rm sex_output; fi	
 if [ -f calib_data$$ ]; then rm calib_data$$; fi	
