@@ -30,8 +30,8 @@ then
 	echo "alternartive (max amplitude) source extracting..."
 #	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
 else
-	echo sextracting...
-#	./sextracting.sh "$FREQ" "$FWHM"
+	echo "sourceextracting..."
+#	./s_extracting.sh "$FREQ" "$FWHM"
 fi
 
 ### find correlations with SMICA and freq-map ###

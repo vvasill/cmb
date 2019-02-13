@@ -37,9 +37,16 @@ do
 				delta_small=$( echo $fw_d*$factor | bc -l)
 			fi
 			
-			infile_1='../big_areas/source_lists/big_area_sources_'$i'_'$fr'_'$fw
-			if [ "$mode" == "S" ]; then outfile='S_outfile_'$i'_'$fr'_'$fw; fi 
-			if [ "$mode" == "T" ]; then outfile='T_outfile_'$i'_'$fr'_'$fw;	fi
+			if [ "$mode" == "S" ]
+			then 
+				infile_1='../big_areas/source_lists/S_big_area_sources_'$i'_'$fr'_'$fw
+				outfile='S_outfile_'$i'_'$fr'_'$fw
+			fi 
+			if [ "$mode" == "T" ]
+			then
+				infile_1='../big_areas/source_lists/T_big_area_sources_'$i'_'$fr'_'$fw
+				outfile='T_outfile_'$i'_'$fr'_'$fw
+			fi
 			> $outfile
 			echo $i'_'$fr'_'$fw
 		

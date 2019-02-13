@@ -35,7 +35,7 @@ do
 			ra_center=${str1[1]}
 			dec_center=${str1[2]}
 			MAP='q'$i'_'$fr'_'$fw'_'$delta'.fts'
-			outfile='./source_lists/big_area_sources_'$i'_'$fr'_'$fw
+			outfile='./source_lists/T_big_area_sources_'$i'_'$fr'_'$fw
 			> $outfile
 
 			name=$i'_'$fr'_'$fw
