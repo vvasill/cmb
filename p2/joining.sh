@@ -40,4 +40,8 @@ done
 
 #empty_trash
 if [ -f freq_line ]; then rm freq_line; fi	
-if [ -f tmp ]; then rm tmp; fi	
+if [ -f tmp ]; then rm tmp; fi
+for file in $outfile*
+do
+	if [ -f $file ]; then rm $file; fi
+done		

@@ -13,8 +13,8 @@ then
 	#out
 	rot='./res/rotated_T_flux_'
 	rot_err='./res/rotated_T_flux_err_'
-	av='/res/T_av_'
-	av_err='/res/T_av_error'
+	av='./res/T_av_'
+	av_err='./res/T_av_error_'
 	out='./res/T_'
 	out_graph='./graphs/T_'
 	y_label='{/Helvetica-Italic T}, K'
@@ -27,8 +27,8 @@ then
 	#out
 	rot='./res/rotated_S_flux_'
 	rot_err='./res/rotated_S_flux_err_'
-	av='/res/S_av_'
-	av_err='/res/S_av_error'
+	av='./res/S_av_'
+	av_err='./res/S_av_error_'
 	out='./res/S_'
 	out_graph='./graphs/S_'
 	y_label='{/Helvetica-Italic S}, Ja'
@@ -55,5 +55,11 @@ do
 done
 
 #empty_trash
-if [ -f $rot* ]; then rm $rot*; fi
-if [ -f $av* ]; then rm $av*; fi	
+for file in $rot*
+do
+	if [ -f $file ]; then rm $file; fi
+done
+for file in $av*
+do
+	if [ -f $file ]; then rm $file; fi	
+done

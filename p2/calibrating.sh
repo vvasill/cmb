@@ -17,7 +17,8 @@ do
 			#params for flux calibration
 			calib_res=( $( cat $home_path'/calib_res' | grep 'fr_'$fr | grep 'fw_'$fw ) )
 			a=${calib_res[2]}
-			b=${calib_res[3]}
+			b=0
+			#b=${calib_res[3]}
 			a_err=${calib_res[4]}
 			b_err=${calib_res[5]}
 		fi

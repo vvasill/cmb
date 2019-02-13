@@ -18,14 +18,18 @@ echo def coords from SMICA...
 echo cutting...
 #./big_areas_cut.sh "$FREQ" "$FWHM" "$home_path"
 
+### extract sources from freq-map ###
 if [ "$1" == "a" ] 
 then
-	echo "alternative (max amplitude) source extracting..."
+	echo "alternartive (max amplitude) source extracting..."
 #	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
 else
 	echo sextracting...
 #	./sextracting.sh "$FREQ" "$FWHM"
 fi
+
+### find correlations with SMICA and freq-map ###
+echo correlating...
 #./with_corr.sh "$FREQ" "$FWHM" "$beamwidth" no "$home_path"
 
 ### match spots and sources ###
@@ -35,7 +39,7 @@ then
 #	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T
 else
 	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S
+#	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S
 fi
 
 if [ "$1" == "a" ] 
@@ -48,26 +52,29 @@ else
 fi
 
 ### joining ###
-echo joining...
 if [ "$1" == "a" ] 
 then
+	echo joining...	
 	./joining.sh "$FWHM" T
 else
+	echo joining...
 	./joining.sh "$FWHM" S
 fi
 
-### rotating and graphing ###
-echo rotating and graphing...
+### rotating and automatic graphing ###
 if [ "$1" == "a" ] 
 then
+	echo rotating and graphing...
 	./rotate_graph.sh "$FWHM" T "$home_path"
 else
+	echo rotating and graphing...
 	./rotate_graph.sh "$FWHM" S "$home_path"
 fi
 
-### graphing... ###
+### plot graphs with axes control ###
 #./graph_man.sh
 
+### create text ###
 #echo latexing...
 #cp ./graphs/*.eps ../text/images/
 #cd ../text

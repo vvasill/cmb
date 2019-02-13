@@ -1,14 +1,14 @@
 #!/bin/bash
 
 mode="S"
-fw=35
+fw=60
 #rlim=0.00045
 #llim=0.0001
 #step=0.0001
 
-rlim=100
+rlim=1.4
 llim=0
-step=20
+step=0.2
 
 if [ "$mode" == "T" ]
 then

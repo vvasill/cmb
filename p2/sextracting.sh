@@ -21,7 +21,7 @@ do
 			i=${str1[0]}
 			MAP='q'$i'_'$fr'_'$fw'_'$delta'.fts'
 			outfile='./source_lists/big_area_sources_'$i'_'$fr'_'$fw
-			if [ -f $outfile ]; then > $outfile; fi
+			> $outfile
 
 			echo $fr' '$fw' '$i
 			
