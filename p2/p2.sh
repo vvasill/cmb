@@ -9,7 +9,7 @@ beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077" #arcdeg
 #smoothing angle
 FWHM="0 5 35 60"
 #threshold for SExtractor
-sigma=1.0
+sigma='1.0'
 
 ### set project directory ###
 #home_path="/D/vasiliy/cmb"
@@ -46,39 +46,39 @@ break
 if [ "$1" == "a" ] 
 then
 	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T
+	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T "$sigma"
 else
 	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S
+	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S "$sigma"
 fi
 
 if [ "$1" == "a" ] 
 then
 	echo calibrating...
-#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T
 else
 	echo calibrating...
-#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S
 fi
 
 ### joining ###
 if [ "$1" == "a" ] 
 then
 	echo joining...	
-#	./joining.sh "$FWHM" T
+	./joining.sh "$FWHM" T
 else
 	echo joining...
-#	./joining.sh "$FWHM" S
+	./joining.sh "$FWHM" S
 fi
 
 ### rotating and automatic graphing ###
 if [ "$1" == "a" ] 
 then
 	echo rotating and graphing...
-#	./rotate_graph.sh "$FWHM" T "$home_path"
+	./rotate_graph.sh "$FWHM" T "$home_path"
 else
 	echo rotating and graphing...
-#	./rotate_graph.sh "$FWHM" S "$home_path"
+	./rotate_graph.sh "$FWHM" S "$home_path"
 fi
 
 ### plot graphs with axes control ###
