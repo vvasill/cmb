@@ -2,9 +2,9 @@
 
 FREQ=$1
 FWHM=$2
+sigma=$3
 
 delta=20.0
-sigma=1.0
 
 cd ./big_areas
 if [ ! -f ./source_lists ]; then mkdir ./source_lists; fi
@@ -26,7 +26,7 @@ do
 			echo $fr' '$fw' '$i
 			
 			#SExtractor processing
-			sex $MAP -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma
+			sextractor $MAP -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma
 			sed -i -e 's/+//g' sex_output 
 			awk 'BEGIN{CONVFMT="%.9f"}{for(i=1; i<=NF; i++)if($i~/^[0-9]+([eE][+-][0-9]+)?/)$i+=0;}1' sex_output > tmp && mv tmp sex_output 
 			cat sex_output >> $outfile	

@@ -12,7 +12,7 @@ sigma=1.0
 factor=1.5
 
 if [ ! -f ./match ]; then mkdir ./match; fi
-cd ./match	
+cd ./match
 
 for fw in $FWHM
 do
@@ -63,6 +63,8 @@ do
 				ra_r=$( echo $ra + $delta_small | bc -l )
 				dec_l=$( echo $dec - $delta_small | bc -l )
 				dec_r=$( echo $dec + $delta_small | bc -l )
+
+				echo $delta_small
 				
 				#checking, if source (from sources on big areas) is included in small_area (across spot on SMICA map)
 				awk -v ra=$ra -v dec=$dec -v ra_l=$ra_l -v ra_r=$ra_r -v dec_l=$dec_l -v dec_r=$dec_r -v spot_num=$spot_num '{if ($4 > ra_l && $4 < ra_r && $5 > dec_l && $5 < dec_r) {printf "%s %s %s %s %s\n", spot_num, $2, $3, ra, dec}}' $infile_1 >> temp_outfile
@@ -74,6 +76,7 @@ do
 						t_err=0
 						while read temp_line
 						do
+							echo $temp_line
 							str3=( $temp_line )	
 							name=${str3[0]}	
 							dt=${str3[1]}
