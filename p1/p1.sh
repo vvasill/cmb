@@ -14,16 +14,21 @@ FWHM="0 5 35 60" #arcmin
 #home_path="/D/vasiliy/cmb"
 home_path="/media/vasiliy/60Gb/cmb"
 
-### extract sources from PLANCK maps in set areas###
+### mark in what area source is situated ###
 echo preparing...
 #./Planck_list_prepare.sh "$home_path"
+
+### extract sources from PLANCK maps in set areas ###
 echo cutting and sextracting...
 #./calib_prepare.sh "$FREQ" "$FWHM" "$beamwidth" "$home_path"
 
 ### calibrate usung leastsquares ###
 echo calibrating...
-./calib.sh "$FREQ" "$FWHM" "$home_path"
-./corr.sh "$FREQ" "$FWHM"
+#./calib.sh "$FREQ" "$FWHM" "$home_path"
+
+### find correlations (not for calibration, see p2) ### 
+echo "finding correlations..."
+#./corr.sh "$FREQ" "$FWHM"
 
 #echo latexing...
 #cp ./graphs/*.eps ../text/images/

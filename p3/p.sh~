@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# prepare figures without multiplication on (-1)
+
+M030=/home/vo/Planck/DR2/m_030_R2.01.fts
+M044=/home/vo/Planck/DR2/m_044_R2.01.fts
+M070=/home/vo/Planck/DR2/m_070_R2.01.fts
+M100=/home/vo/Planck/DR2/m_100_R2.02.fts
+M143=/home/vo/Planck/DR2/m_143_R2.02.fts
+M217=/home/vo/Planck/DR2/m_217_R2.02.fts
+M353=/home/vo/Planck/DR2/m_353_R2.02.fts
+M545=/home/vo/Planck/DR2/m_545_R2.02.fts
+M857=/home/vo/Planck/DR2/m_857_R2.02.fts
+
+LFREC="030 044 070 100 143 217 353 545 857"
+delta="20"
+
+for fr in $LFREC
+do
+	if [[ ${fr} -gt 90 ]]; then
+		MAP=/home/vo/Planck/DR2/m_${fr}_R2.02.fts
+	else
+		MAP=/home/vo/Planck/DR2/m_${fr}_R2.01.fts
+	fi
+
+	if [ ! -f $MAP ]; then
+		echo no file $MAP ...
+		exit 1
+	fi
+
+	awk -v f=$fr '{if ($4 == "0" || ($4 == "1" && f < 300)) {printf "%s_%s %sd %sd\n", $1, f, $2, $3}}' big_areas > coord_list$$
+	delta=20.0'd'	
+	#mapcut $MAP -fzg1 coord_list$$ -zd $delta
+	#f2fig  $MAP -fzg1 coord_list$$ -zd $delta -Cs nat
+	f2fig  $MAP -zf coord_list$$ -zd $delta
+
+	echo "FREQ: $fr - done"
+done
+
+if [ -f coord_list$$ ]; then rm coord_list$$; fi
+
+
+
+

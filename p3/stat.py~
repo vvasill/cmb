@@ -1,0 +1,27 @@
+import sys, glob, os
+from math import *
+import numpy as np
+
+x = np.loadtxt(sys.argv[1])
+y = np.loadtxt(sys.argv[2])
+x_err = np.loadtxt(sys.argv[3])
+y_err = np.loadtxt(sys.argv[4])
+a = float(sys.argv[5])
+b = float(sys.argv[6])
+num = x.shape[0]
+
+out = np.zeros((x.shape[0],4))
+
+sum_sum = 0.0
+for i in range (0, num):
+	sum_sum += (y[i] - a*x[i] - b)**2
+sigma = sqrt( 1.0/(num-1.0)*sum_sum)
+
+for i in range (0, num):
+	if (abs(y[i] - a*x[i] - b) < 1.0*sigma and y[i] < 1.0):
+		out[i,0] = x[i]
+		out[i,1] = x_err[i]
+		out[i,2] = y[i]
+		out[i,3] = y_err[i]
+
+np.savetxt(sys.argv[7], out, fmt='%s')

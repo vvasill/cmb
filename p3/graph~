@@ -1,0 +1,25 @@
+reset
+set terminal gif
+set output fn_out_gif
+
+ff(x) = aa*x + bb
+fit ff(x) fn_in using 2:4 via aa, bb
+
+f(x) = a*x + b
+
+set ylabel "S, Ja"
+set xlabel "T, K"
+
+plot fn_in using 2:4:($2-$3):($2+$3):($4-$5):($4+$5) with xyerrorbars notitle, f(x)
+
+reset
+set terminal postscript eps enhanced dl 1.5 font 'Helvetica, 18' size 3.0, 2.0
+set output fn_out_eps_wb
+
+set ylabel "S, Ja"
+set xlabel "T, K"
+
+set style line 1 lc -1 lw 2.0
+set style line 2 lc -1 dt (5.5, 4, 5.5, 4) lw 2.0
+
+plot fn_in using 2:4:($2-$3):($2+$3):($4-$5):($4+$5) with xyerrorbars pt 0 notitle, f(x) ls 2 notitle

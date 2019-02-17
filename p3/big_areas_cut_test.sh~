@@ -1,0 +1,41 @@
+#!/bin/bash
+
+M030=/home/vo/Planck/DR2/m_030_R2.01.fts
+M044=/home/vo/Planck/DR2/m_044_R2.01.fts
+M070=/home/vo/Planck/DR2/m_070_R2.01.fts
+M100=/home/vo/Planck/DR2/m_100_R2.02.fts
+M143=/home/vo/Planck/DR2/m_143_R2.02.fts
+M217=/home/vo/Planck/DR2/m_217_R2.02.fts
+M353=/home/vo/Planck/DR2/m_353_R2.02.fts
+M545=/home/vo/Planck/DR2/m_545_R2.02.fts
+M857=/home/vo/Planck/DR2/m_857_R2.02.fts
+
+LFREC="030 044 070 100 143 217 353 545 857"
+LFREC="143"
+delta="20.0"
+LDELTA="20.0 10.0 5.0 2.5 1.0 0.5 0.25"
+factor=1.5
+
+cd ./big_areas_test
+
+for fr in $LFREC
+do
+	MAP='M'$fr
+	
+	for delta in $LDELTA
+	do
+
+		#awk -v f=$fr -v d=$delta '{if ($4 == "0" || ($4 == "1" && f < 300)) {printf "%s_%s_%s %sd %sd\n", $1, f, d, $2, $3}}' ../big_areas_list > coord_list$$
+		cat ../big_areas_list_equ | grep -v '^#' |awk -v f=$fr -v d=$delta '{printf "%s_%s_%s %sd %sd\n", $1, f, d, $2, $3}' > coord_list$$
+		mapcut ${!MAP} -fzq1 coord_list$$ -zd $delta'd'
+		f2fig  ${!MAP} -fzq1 coord_list$$ -zd $delta'd' -Cs nat
+		#mapcut $MAP -fzg1 coord_list$$ -zd $delta'd'
+		#f2fig  $MAP -fzg1 coord_list$$ -zd $delta'd' -Cs nat
+
+	done
+	echo "FREQ: $fr - done"
+done
+
+#empty_trash
+if [ -f coord_list$$ ]; then rm coord_list$$; fi
+

@@ -1,0 +1,24 @@
+reset
+set terminal gif		
+set output fn_out
+
+set ylabel "S_{calc}, Ja"
+set xlabel "S, Ja"
+
+plot fn_in using 3:1:($3-$4):($3+$4):($1-$2):($1+$2) with xyerrorbars notitle
+
+reset
+#set terminal postscript eps enhanced dl 1.5 font 'Helvetica, 18' size 3.0, 2.0
+#set output fn_out_eps_wb
+
+set ylabel "S_{calc}, Ja"
+set xlabel "S, Ja"
+
+set xrange [0.0 : 30.0]
+set yrange [0.0 : 30.0]
+
+set style line 1 lc -1 lw 2.0
+
+#plot fn_in using 3:1:($3-$4):($3+$4):($1-$2):($1+$2) with xyerrorbars pt 0 notitle
+
+reset

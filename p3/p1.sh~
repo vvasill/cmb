@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#> /dev/null 2>&1
+
+FREQ="030 044 070 100 143 217"
+beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077"
+FWHM="0 5 35 60"
+
+echo preparing...
+#./Planck_list_prepare.sh
+echo cutting and sextracting...
+#./calib_prepare.sh "$FREQ" "$FWHM" "$beamwidth"
+echo calibrating...
+./calib.sh "$FREQ" "$FWHM"
+./corr.sh "$FREQ" "$FWHM"

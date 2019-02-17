@@ -35,14 +35,14 @@ do
 				
 			if [ "$mode" == "S" ]
 			then
-				infile=$sigma'/S_outfile_'$i'_'$fr'_'$fw
+				infile='/S_outfile_'$i'_'$fr'_'$fw'_'$sigma
 				
 				### flux calibration ###
 				awk -v a=$a -v b=$b -v num=$i -v a_err=$a_err -v a_err=$a_err '{printf "%s_%s %s %s %s %s\n", num, $1, (a*$2+b), sqrt(($2*a_err)*($2*a_err) + (a*$3)*(a*$3) + b_err*b_err), $4, $5}' $infile >> $outfile
 			fi
 			if [ "$mode" == "T" ]
 			then
-				infile='T_outfile_'$i'_'$fr'_'$fw
+				infile='T_outfile_'$i'_'$fr'_'$fw'_'$sigma
 	
 				### or no calibration ###
 				awk -v num=$i '{printf "%s_%s %s %s %s %s\n", num, $1, $2, $3, $4, $5}' $infile >> $outfile

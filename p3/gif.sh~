@@ -1,0 +1,17 @@
+#!/bin/bash
+
+M030=/home/vo/Planck/DR2/m_030_R2.01.fts
+M044=/home/vo/Planck/DR2/m_044_R2.01.fts
+M070=/home/vo/Planck/DR2/m_070_R2.01.fts
+M100=/home/vo/Planck/DR2/m_100_R2.02.fts
+M143=/home/vo/Planck/DR2/m_143_R2.02.fts
+M217=/home/vo/Planck/DR2/m_217_R2.02.fts
+M353=/home/vo/Planck/DR2/m_353_R2.02.fts
+M545=/home/vo/Planck/DR2/m_545_R2.02.fts
+M857=/home/vo/Planck/DR2/m_857_R2.02.fts
+
+#f2fig $M030 -C -0.0005,+0.0005 -o 30.gif -gr g
+
+path='M'$1
+echo $path
+f2fig ${!path} -C $2,$3 -o $1'.gif' -gr g

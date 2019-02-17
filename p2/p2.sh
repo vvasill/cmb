@@ -53,36 +53,37 @@ do
 		echo matching...
 	#	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S "$sigma"
 	fi
-
-	if [ "$1" == "a" ] 
-	then
-		echo calibrating...
-	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T "$sigma"
-	else
-		echo calibrating...
-	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S "$sigma"
-	fi
-
-	### joining ###
-	if [ "$1" == "a" ] 
-	then
-		echo joining...	
-	#	./joining.sh "$FWHM" T
-	else
-		echo joining...
-	#	./joining.sh "$FWHM" S
-	fi
-
-	### rotating and automatic graphing ###
-	if [ "$1" == "a" ] 
-	then
-		echo rotating and graphing...
-	#	./rotate_graph.sh "$FWHM" T "$home_path"
-	else
-		echo rotating and graphing...
-	#	./rotate_graph.sh "$FWHM" S "$home_path"
-	fi
 done
+
+### calibrating (in flux mode) and joining all big areas info in one file ###
+if [ "$1" == "a" ] 
+then
+	echo calibrating...
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T "$sigma"
+else
+	echo calibrating...
+	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S "$sigma"
+fi
+
+### joining ###
+if [ "$1" == "a" ] 
+then
+	echo joining...	
+	./joining.sh "$FWHM" T
+else
+	echo joining...
+	./joining.sh "$FWHM" S
+fi
+
+### rotating and automatic graphing ###
+if [ "$1" == "a" ] 
+then
+	echo rotating and graphing...
+	./rotate_graph.sh "$FWHM" T "$home_path"
+else
+	echo rotating and graphing...
+	./rotate_graph.sh "$FWHM" S "$home_path"
+fi
 
 ### plot graphs with axes control ###
 #./graph_man.sh

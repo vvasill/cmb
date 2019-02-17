@@ -1,0 +1,19 @@
+import sys, glob, os
+from math import *
+import numpy as np
+
+areas_in = np.loadtxt('../big_areas_list_equ')
+i = int(sys.argv[2])
+count_area = int(sys.argv[3])
+delta = float(sys.argv[4])
+big_delta = 10.0
+
+ra_start = areas_in[i,1] - big_delta/15
+dec_start = areas_in[i,2] - big_delta
+
+ra = ra_start + (delta*(count_area - 20*int(count_area/20.0)))/15
+dec = dec_start + delta*int(count_area/20.0)
+num1 = delta*int(count_area/20.0)
+num2 = delta*(count_area - 20*int(count_area/20.0))
+
+print sys.argv[1], ra, dec

@@ -1,0 +1,53 @@
+#!/bin/sh -f
+
+# prepare figures without multiplication on (-1) for low frequncies and CMB
+
+CMB=/home/vo/Planck/DR2/m_smica2.01.fts
+CMB21=/home/vo/Planck/DR2/m_sm_l_ge21.fts
+M030=/home/vo/Planck/DR2/m_030_R2.01.fts
+M044=/home/vo/Planck/DR2/m_044_R2.01.fts
+M070=/home/vo/Planck/DR2/m_070_R2.01.fts
+M100=/home/vo/Planck/DR2/m_100_R2.02.fts
+M143=/home/vo/Planck/DR2/m_143_R2.02.fts
+M217=/home/vo/Planck/DR2/m_217_R2.02.fts
+M353=/home/vo/Planck/DR2/m_353_R2.02.fts
+M545=/home/vo/Planck/DR2/m_545_R2.02.fts
+M857=/home/vo/Planck/DR2/m_857_R2.02.fts
+
+
+LFREC="c21 cmb 030 044 070 100 143 217 353 545 857"
+LFREC="030 044 070 100 143"
+#LRA="0000 0030 0100 0130"
+LRA="0200 0230 0300 0330 0400 0430 0500 0530"
+
+for fr in $LFREC
+do
+    if [ $fr = cmb ]; then
+	MAP=$CMB
+    elif [ $fr = c21 ]; then
+	MAP=${CMB21}     # use opposit CMB map l>20
+    elif [[ ${fr} -gt 90 ]]; then
+#       MAP=/home/vo/Planck/DR2/m_${fr}.fts
+	MAP=/home/vo/Planck/DR2/m_${fr}_R2.02.fts
+    else
+	MAP=/home/vo/Planck/DR2/m_${fr}_R2.01.fts
+    fi
+
+    if [ ! -f $MAP ]; then
+	echo no file $MAP ...
+	exit 1
+    fi
+
+    for rs in $LRA
+    do
+	CTin=WB.${rs}
+	DI=${rs}
+
+	awk -v f=$fr '{printf "%s_%s %s %s\n", $1, f, $2,$3}' $CTin > qq$$
+#       mapcut $MAP -fzq1 qq$$ -zd 0.5d -di $DI
+	f2fig  $MAP -fzq1 qq$$ -zd 0.5d -di $DI  -Cs nat
+    done
+    echo "FREQ: $fr - done"
+done
+
+if [ -f qq$$ ]; then rm qq$$; fi
