@@ -9,7 +9,8 @@ beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077" #arcdeg
 #smoothing angle
 FWHM="0 5 35 60"
 #threshold for SExtractor
-sigma='1.0'
+sigma_line="1.0 2.0 3.0"
+sigma_line='1.0'
 
 ### set project directory ###
 #home_path="/D/vasiliy/cmb"
@@ -30,56 +31,58 @@ echo cutting...
 echo correlating...
 #./with_corr.sh "$FREQ" "$FWHM" "$beamwidth" "$home_path" no 0.001
 
-### extract sources from freq-map ###
-if [ "$1" == "a" ] 
-then
-	echo "alternartive (max amplitude) source extracting..."
-#	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
-else
-	echo "source extracting..."
-#	./s_extracting.sh "$FREQ" "$FWHM" "$sigma"
-fi
+for sigma in $sigma_line
+do
+	### extract sources from freq-map ###
+	if [ "$1" == "a" ] 
+	then
+		echo "alternartive (max amplitude) source extracting..."
+	#	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
+		./as_extracting.sh "$FREQ" "$FWHM" "$sigma"
+	else
+		echo "source extracting..."
+	#	./s_extracting.sh "$FREQ" "$FWHM" "$sigma"
+	fi
 
-break
+	### match spots and sources ###
+	if [ "$1" == "a" ] 
+	then
+		echo matching...
+	#	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T "$sigma"
+	else
+		echo matching...
+	#	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S "$sigma"
+	fi
 
-### match spots and sources ###
-if [ "$1" == "a" ] 
-then
-	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T "$sigma"
-else
-	echo matching...
-	./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S "$sigma"
-fi
+	if [ "$1" == "a" ] 
+	then
+		echo calibrating...
+	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T "$sigma"
+	else
+		echo calibrating...
+	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S "$sigma"
+	fi
 
-if [ "$1" == "a" ] 
-then
-	echo calibrating...
-	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T
-else
-	echo calibrating...
-	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S
-fi
+	### joining ###
+	if [ "$1" == "a" ] 
+	then
+		echo joining...	
+	#	./joining.sh "$FWHM" T
+	else
+		echo joining...
+	#	./joining.sh "$FWHM" S
+	fi
 
-### joining ###
-if [ "$1" == "a" ] 
-then
-	echo joining...	
-	./joining.sh "$FWHM" T
-else
-	echo joining...
-	./joining.sh "$FWHM" S
-fi
-
-### rotating and automatic graphing ###
-if [ "$1" == "a" ] 
-then
-	echo rotating and graphing...
-	./rotate_graph.sh "$FWHM" T "$home_path"
-else
-	echo rotating and graphing...
-	./rotate_graph.sh "$FWHM" S "$home_path"
-fi
+	### rotating and automatic graphing ###
+	if [ "$1" == "a" ] 
+	then
+		echo rotating and graphing...
+	#	./rotate_graph.sh "$FWHM" T "$home_path"
+	else
+		echo rotating and graphing...
+	#	./rotate_graph.sh "$FWHM" S "$home_path"
+	fi
+done
 
 ### plot graphs with axes control ###
 #./graph_man.sh

@@ -11,7 +11,8 @@ sigma=$5
 BW_str=( $beamwidth )
 factor=1.5
 
-if [ ! -f ./match ]; then mkdir ./match; fi
+check_dir='./match/'$sigma
+if [ ! -f $check_dir ]; then mkdir $check_dir; fi
 cd ./match
 
 for fw in $FWHM
@@ -40,12 +41,12 @@ do
 			if [ "$mode" == "S" ]
 			then 
 				infile_1='../big_areas/source_lists/'$sigma'/S_big_area_sources_'$i'_'$fr'_'$fw
-				outfile='S_outfile_'$i'_'$fr'_'$fw
+				outfile='S_outfile_'$i'_'$fr'_'$fw'_'$sigma
 			fi 
 			if [ "$mode" == "T" ]
 			then
-				infile_1='../big_areas/source_lists/T_big_area_sources_'$i'_'$fr'_'$fw
-				outfile='T_outfile_'$i'_'$fr'_'$fw
+				infile_1='../big_areas/source_lists/'$sigma'/T_big_area_sources_'$i'_'$fr'_'$fw
+				outfile='T_outfile_'$i'_'$fr'_'$fw'_'$sigma
 			fi
 			> $outfile
 			echo $i'_'$fr'_'$fw

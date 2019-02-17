@@ -4,6 +4,7 @@ FREQ=$1
 FWHM=$2
 home_path=$3
 mode=$4
+sigma=$5
 
 cd ./match
 
@@ -17,8 +18,7 @@ do
 			#params for flux calibration
 			calib_res=( $( cat $home_path'/calib_res' | grep 'fr_'$fr | grep 'fw_'$fw ) )
 			a=${calib_res[2]}
-			b=0
-			#b=${calib_res[3]}
+			b=${calib_res[3]}
 			a_err=${calib_res[4]}
 			b_err=${calib_res[5]}
 		fi
@@ -35,7 +35,7 @@ do
 				
 			if [ "$mode" == "S" ]
 			then
-				infile='S_outfile_'$i'_'$fr'_'$fw
+				infile=$sigma'/S_outfile_'$i'_'$fr'_'$fw
 				
 				### flux calibration ###
 				awk -v a=$a -v b=$b -v num=$i -v a_err=$a_err -v a_err=$a_err '{printf "%s_%s %s %s %s %s\n", num, $1, (a*$2+b), sqrt(($2*a_err)*($2*a_err) + (a*$3)*(a*$3) + b_err*b_err), $4, $5}' $infile >> $outfile
