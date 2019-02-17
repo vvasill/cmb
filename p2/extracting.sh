@@ -2,7 +2,8 @@
 
 FREQ=$1
 FWHM=$2
-sigma=$3
+mode=$3
+sigma=$4
 delta=20.0
 
 cd ./big_areas
@@ -20,15 +21,31 @@ do
 			str1=( $areas_line )
 			i=${str1[0]}
 			MAP='q'$i'_'$fr'_'$fw'_'$delta'.fts'
-			outfile='./source_lists/'$sigma'/S_big_area_sources_'$i'_'$fr'_'$fw
-			> $outfile
 
+			if [ "$mode" == "S" ]
+			then
+				sex_config='../sex_config/config_S'
+				outfile='./source_lists/'$sigma'/S_big_area_sources_'$i'_'$fr'_'$fw
+			fi
+			if [ "$mode" == "T" ]
+			then
+				sex_config='../sex_config/config_T'
+				outfile='./source_lists/'$sigma'/T_big_area_sources_'$i'_'$fr'_'$fw
+			fi
+
+			> $outfile
 			echo $fr' '$fw' '$i
 			
 			#SExtractor processing
-			sextractor $MAP -c ../sex_config/config_S -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma
+			sextractor $MAP -c $sex_config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
 			sed -i -e 's/+//g' sex_output 
 			awk 'BEGIN{CONVFMT="%.9f"}{for(i=1; i<=NF; i++)if($i~/^[0-9]+([eE][+-][0-9]+)?/)$i+=0;}1' sex_output > tmp && mv tmp sex_output 
+
+			if [ "$mode" == "T" ]
+			then
+				awk '{printf "%s %s %s %s %s\n", $1, $2, '0', $3, $4}' sex_output > tmp && mv tmp sex_output
+			fi
+
 			cat sex_output >> $outfile	
 		done	
 	done

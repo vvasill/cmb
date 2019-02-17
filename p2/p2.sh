@@ -38,10 +38,10 @@ do
 	then
 		echo "alternartive (max amplitude) source extracting..."
 	#	./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth"
-		./as_extracting.sh "$FREQ" "$FWHM" "$sigma"
+	#	./extracting.sh "$FREQ" "$FWHM" T "$sigma"
 	else
 		echo "source extracting..."
-	#	./s_extracting.sh "$FREQ" "$FWHM" "$sigma"
+	#	./extracting.sh "$FREQ" "$FWHM" S "$sigma"
 	fi
 
 	### match spots and sources ###
