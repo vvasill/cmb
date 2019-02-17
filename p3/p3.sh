@@ -15,22 +15,29 @@ FWHM="0 5 35 60" #arcmin
 home_path="/media/vasiliy/60Gb/cmb_debug"
 
 ### mark in what area source is situated ###
-echo preparing...
+echo "preparing..."
 #./Planck_list_prepare.sh "$home_path"
 
-### extract sources from PLANCK maps in set areas ###
-echo cutting and extracting...
-./calib_prepare.sh "$FREQ" "$FWHM" "$beamwidth" "$home_path"
+### cut big areas from smoothed maps ###
+echo "cutting..."
+#./big_areas_cut.sh "$FREQ" "$FWHM" "$home_path"
 
-### calibrate usung leastsquares ###
-echo calibrating...
-#./calib.sh "$FREQ" "$FWHM" "$home_path"
+### extract sources from freq-map ###
+echo "source extracting..."
+#./sextracting.sh "$FREQ" "$FWHM" "$home_path"
+
+echo "matching..."
+#./matching.sh "$FREQ" "$FWHM" "$home_path"
+
+### calibrate using leastsquares ###
+echo "calibrating..."
+./calib.sh "$FREQ" "$FWHM" "$home_path"
 
 ### find correlations (not for calibration, see p2) ### 
 echo "finding correlations..."
 #./corr.sh "$FREQ" "$FWHM"
 
-#echo latexing...
+#echo "latexing..."
 #cp ./graphs/*.eps ../text/images/
 #cd ../text
 #pdflatex text.tex

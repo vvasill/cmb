@@ -85,12 +85,12 @@ do
 				echo $line > coord_line$$
 				str=( $line )
 				name=${str[0]}
-				fits_name=${str[0]}'.fts'
+				fits_name=$name'.fts'
 				ra_c=${str[1]}
 				dec_c=${str[2]}			
 					
 				#SExtractor processing
-				sex $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
+				sextractor $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
 
 				#list of all sextractions
 				cat sex_output >> ../out_data/small_areas_sources
@@ -132,7 +132,7 @@ do
 		#merging Planck_fluxes and sextractor output in one file
 		awk 'FNR==NR{a[$1]=$2;b[$1]=$3;next} ($1 in a) {print $0,a[$1],b[$1]}' flux_list$$ calib_data$$ > $outfile
 	
-		#empty files for new freq
+		#empty file for new freq
 		> calib_data$$
 	done
 	(( count++ ))
