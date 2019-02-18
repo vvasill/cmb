@@ -8,6 +8,7 @@ FREQ="030 044 070 100 143 217" #GHz
 beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077" #arcdeg
 #smoothing angle
 FWHM="0 5 35 60" #arcmin
+FWHM="0" #arcmin
 
 ### set project directory ###
 #home_path="/users/vasily/data"
@@ -27,7 +28,7 @@ echo "source extracting..."
 #./sextracting.sh "$FREQ" "$FWHM" "$home_path"
 
 echo "matching..."
-#./matching.sh "$FREQ" "$FWHM" "$home_path"
+#./matching.sh "$FREQ" "$FWHM" "$beamwidth"
 
 ### calibrate using leastsquares ###
 echo "calibrating..."

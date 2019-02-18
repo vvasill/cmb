@@ -3,32 +3,30 @@
 FREQ=$1
 FWHM=$2
 beamwidth=$3
-home_path=$4
-
 sigma=1.0
 factor=1.5
 BW_str=( $beamwidth )
-outfile='../out_data/calib_data_'$fr'_'$fw	
 
 check_dir='./out_data'
 if [ ! -f $check_dir ]; then mkdir $check_dir; fi
 
+#loop_on_freq
 count=0
-#loop_on_smoothing_angles
-for fw in $FWHM
+for fr in $FREQ
 do
-	#names def
-	BW=${BW_str[$count]}
-	fw_d=$( echo $fw/60.0 | bc -l )
-	if (( $( echo $BW '>' $fw_d | bc -l ) ))
-	then
-		delta_small=$( echo $BW*$factor | bc )
-	else
-		delta_small=$( echo $fw_d*$factor | bc -l)
-	fi
-	#loop_on_freqs
-	for fr in $FREQ
+	#loop_on_smoothing_angles
+	for fw in $FWHM
 	do
+		#names def
+		BW=${BW_str[$count]}
+		fw_d=$( echo $fw/60.0 | bc -l )
+		if (( $( echo $BW '>' $fw_d | bc -l ) ))
+		then
+			delta_small=$( echo $BW*$factor | bc -l )
+		else
+			delta_small=$( echo $fw_d*$factor | bc -l )
+		fi
+
 		outfile='./out_data/calib_data_'$fr'_'$fw
 		> $outfile
 		#loop_on_big_areas
@@ -87,8 +85,8 @@ do
 				fi
 			done
 		done
-		(( count++ ))
 	done
+	(( count++ ))
 done
 
 #empty_trash	

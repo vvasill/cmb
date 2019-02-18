@@ -53,4 +53,6 @@ do
 	done
 done
 
-#cp calib_res $home_path'/calib_res'
+#empty_trash	
+if [ -f flux ]; then rm flux; fi
+if [ -f temp ]; then rm temp; fi
