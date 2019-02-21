@@ -67,7 +67,10 @@ do
 			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, ($8*15.0), $9}' > decimal_coord_list$$
 			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $6, $7}' > flux_list$$
 			echo 'sources are available: '$(cat coord_list$$ | wc -l )
-
+			#coord_list: name, ra_h, dec_h
+			#decimal_coord_lst: name, ra, dec
+			#flux_list: name, flux, flux_err
+		
 			#loop_on_sources		
 
 			#cutting small areas	
@@ -90,7 +93,7 @@ do
 				dec_c=${str[2]}			
 					
 				#SExtractor processing
-				sex $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
+				sextractor $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
 
 				#list of all sextractions
 				cat sex_output >> ../out_data/small_areas_sources

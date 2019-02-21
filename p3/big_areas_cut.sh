@@ -32,7 +32,7 @@ do
 			MAP='MAP_0';;
 		esac
 
-		cat ../big_areas_list_equ | grep -v '^#' |awk -v fr=$fr -v fw=$fw -v d=$delta '{printf "q%s_%s_%s_%s %sd %sd\n", $1, fr, fw, d, $2, $3}' > coord_list$$		
+		cat ../big_areas_list_equ | grep -v '^#' | awk -v fr=$fr -v fw=$fw -v d=$delta '{printf "q%s_%s_%s_%s %sd %sd\n", $1, fr, fw, d, $2, $3}' > coord_list$$		
 		mapcut ${!MAP} -fzq1 coord_list$$ -zd $delta'd'
 		f2fig ${!MAP} -fzq1 coord_list$$ -zd $delta'd' -Cs nat
 	done
