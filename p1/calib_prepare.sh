@@ -1,29 +1,46 @@
 #!/bin/bash
 
-M030=/home/vo/Planck/DR2/m_030_R2.01.fts
-M044=/home/vo/Planck/DR2/m_044_R2.01.fts
-M070=/home/vo/Planck/DR2/m_070_R2.01.fts
-M100=/home/vo/Planck/DR2/m_100_R2.02.fts
-M143=/home/vo/Planck/DR2/m_143_R2.02.fts
-M217=/home/vo/Planck/DR2/m_217_R2.02.fts
-M353=/home/vo/Planck/DR2/m_353_R2.02.fts
-M545=/home/vo/Planck/DR2/m_545_R2.02.fts
-M857=/home/vo/Planck/DR2/m_857_R2.02.fts
-
 FREQ=$1
 FWHM=$2
 beamwidth=$3
 home_path=$4
+mode=$5
 
 factor=1.5
 sigma=1.0
-outfile='../out_data/calib_data_'$fr'_'$fw	
+delta=20.0
 
-> ./out_data/skipped_names
-> ./out_data/small_areas_sources
-if [ ! -f ./out_data ]; then mkdir ./out_data; fi
-if [ ! -f ./small_areas ]; then mkdir ./small_areas; fi
-cd ./small_areas
+BW_str=( $beamwidth )
+sxt_config='./sxt_config/config'	
+
+#############################################################################
+
+M030=$home_path'/maps/m_030_R2.01.fts'
+M044=$home_path'/maps/m_044_R2.01.fts'
+M070=$home_path'/maps/m_070_R2.01.fts'
+M100=$home_path'/maps/m_100_R2.02.fts'
+M143=$home_path'/maps/m_143_R2.02.fts'
+M217=$home_path'/maps/m_217_R2.02.fts'
+M353=$home_path'/maps/m_353_R2.02.fts'
+M545=$home_path'/maps/m_545_R2.02.fts'
+M857=$home_path'/maps/m_857_R2.02.fts'
+
+if [ ! -d ./out_data ]; then mkdir ./out_data; fi
+if [ ! -d ./small_areas ]; then mkdir ./small_areas; fi
+if [ ! -d ./temp ]; then mkdir ./temp; fi
+
+coord_list=./temp/coord_list$$
+flux_list=./temp/flux_list$$
+flux_coord_list=./temp/flux_coord_list$$
+flux_coord_list_controled=./temp/flux_coord_list_controled
+decimal_coord_list=./temp/decimal_coord_list$$
+skipped=./out_data/skipped_names_1
+all=./out_data/all_sources
+controled_list=./out_data/controled_list
+
+> $skipped
+> $all
+> $controled_list
 
 #loop_on_freq
 count=0
@@ -33,16 +50,16 @@ do
 	for fw in $FWHM
 	do
 		#set a size of small area for current fw/freq and map/smoothed map
-		BW_str=( $beamwidth )
 		BW=${BW_str[$count]}
-
 		fw_d=$( echo $fw/60.0 | bc -l )
-		if (( $( echo $BW '>' $fw_d | bc -l ) )); then
-			delta=$( echo $BW*$factor | bc -l )
+		if (( $( echo $BW '>' $fw_d | bc -l ) ))
+		then
+			delta_small=$( echo $factor*$BW | bc -l )
 		else
-			delta=$( echo $fw_d*$factor | bc -l)
+			delta_small=$( echo $factor*$fw_d | bc -l )
 		fi
-		echo $delta
+		outfile='./out_data/data_'$fr'_'$fw
+		>$outfile
 
 		#set path to current map
 		case $fw in
@@ -54,98 +71,87 @@ do
 		esac
 
 		#loop_on_big_areas
-		cat /users/vasily/data/big_areas_list | grep -v '^#' | while read areas_line
+		cat ./big_areas_list_equ | grep -v '^#' | while read line
 		do 
 			#names def
-			str1=( $areas_line )
-			i=${str1[0]}
+			ba_str=( $line )
+			i=${ba_str[0]}
 			area_num='area_'$i'.0'
 			echo "freq: $fr big area: $i FWHM: $fw"
 
-			#sources_info_extracting: coords, coords in decimal format, fluxes
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $3, $4}' > coord_list$$
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, ($8*15.0), $9}' > decimal_coord_list$$
-			cat ../Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $6, $7}' > flux_list$$
-			echo 'sources are available: '$(cat coord_list$$ | wc -l )
+			### sources_info_extracting: coords and fluxes ###
 			#coord_list: name, ra_h, dec_h
-			#decimal_coord_lst: name, ra, dec
-			#flux_list: name, flux, flux_err
+			#coord_flux_list: name, flux, flux_err, ra, dec
+			cat ./Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s\n", $1, num, fr, fw, $3, $4}' > $coord_list
+			cat ./Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s %s %s %s %s\n", $1, num, fr, fw, $6, $7, ($8*15.0), $9}' > $flux_coord_list
+			echo 'sources are available: '$( cat $flux_coord_list | wc -l )
 		
-			#loop_on_sources		
+			### cutting small areas and figs plotting ###
+			#./small_areas_cut.sh ${!MAP} $coord_list $small_delta
 
-			#cutting small areas	
-			cat coord_list$$ | while read line
-			do
-				echo $line > coord_line$$
-				f2fig  ${!MAP} -fzq1 coord_line$$ -zd $delta'd' -Cs nat > /dev/null 2>&1
-				mapcut ${!MAP} -fzq1 coord_line$$ -zd $delta'd' > /dev/null 2>&1
-			done
+			### checking, if figure is good ###
+			>$flux_coord_list_controled
+			./fig_check.sh $flux_coord_list $flux_coord_list_controled $mode
+			cat $flux_coord_list_controled >> $controled_list
 
-			#extracting integral temperatures
-			cat decimal_coord_list$$ | while read line
+			### extracting integral temperatures ###
+			#loop_on_sources
+			cat $flux_coord_list_controled | grep 'flag_y' | while read line
 			do
 				#coords and names def
-				echo $line > coord_line$$
-				str=( $line )
-				name=${str[0]}
-				fits_name=${str[0]}'.fts'
-				ra_c=${str[1]}
-				dec_c=${str[2]}			
+				fc_str=( $line )
+				source_name=${fc_str[0]}
+				fits_name='./small_areas/'${fc_str[0]}'.fts'
+				flux=${fc_str[1]}
+				flux_err=${fc_str[2]}
+				ra_c=${fc_str[3]}
+				dec_c=${fc_str[4]}			
 					
 				#SExtractor processing
-				sextractor $fits_name -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
+				sextractor $fits_name -c $sxt_config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma > /dev/null 2>&1
 
 				#list of all sextractions
-				cat sex_output >> ../out_data/small_areas_sources
+				cat sxt_output >> $all
 				#avoiding problems with exponential format
-				awk 'BEGIN{CONVFMT="%.9f"}{for(i=1; i<=NF; i++)if($i~/^[0-9]+([eE][+-][0-9]+)?/)$i+=0;}1' sex_output > tmp && mv tmp sex_output 
-				sed -i -e 's/+//g' sex_output
+				awk 'BEGIN{CONVFMT="%.9f"}{for(i=1; i<=NF; i++)if($i~/^[0-9]+([eE][+-][0-9]+)?/)$i+=0;}1' sxt_output > ./temp/sxt_tmp
+				sed -i 	-e 's/+//g' ./temp/sxt_tmp
 
 				#sex_output_file_modifications: merging if more than one source in small_area
-				if [ -s sex_output ]; then
-				cat sex_output | ( 
+				if [ -s ./temp/sxt_tmp ]; then
+				cat ./temp/sxt_tmp | ( 
 					t=0
 					t_err=0
 
-					while read sex_line
+					while read sxt_line
 					do
-						str=( $sex_line )		
-						dt=${str[1]}
-						dt_err=${str[2]}
-						ra=${str[3]}
-						dec=${str[4]}
+						sxt_str=( $sxt_line )		
+						dt=${sxt_str[1]}
+						dt_err=${sxt_str[2]}
+						ra=${sxt_str[3]}
+						dec=${sxt_str[4]}
+						
 						len1=$( echo "sqrt( ($ra - $ra_c)*($ra - $ra_c) + ($dec - $dec_c)*($dec - $dec_c) )" | bc -l )
-						len2=$( echo "$delta*0.5" | bc -l )
+						len2=$( echo "$delta_small*0.5" | bc -l )
 						
 						if (( $( echo $len1'<'$len2 | bc -l ) ))
 						then
-							t=$(echo $t + $dt | bc)
+							t=$( echo $t + $dt | bc -l )
 							t_err=$( echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
 						else 
-							echo $name >> ../out_data/skipped_names
+							echo $source_name >> $skipped
 						fi
 					done	
-	
-					echo $name' '$t' '$t_err >> calib_data$$
+
+					if [ "$t" != "0" ]; then echo $source_name' '$t' '$t_err' '$flux' '$flux_err >> $outfile; fi
 				)
 				fi
 			done
 		done
-
-		#merging Planck_fluxes and sextractor output in one file
-		awk 'FNR==NR{a[$1]=$2;b[$1]=$3;next} ($1 in a) {print $0,a[$1],b[$1]}' flux_list$$ calib_data$$ > $outfile
-	
-		#empty files for new freq
-		> calib_data$$
 	done
 	(( count++ ))
 done
 
 #empty_trash
-if [ -f coord_list$$ ]; then rm coord_list$$; fi
-if [ -f coord_line$$ ]; then rm coord_line$$; fi
-if [ -f decimal_coord_list$$ ]; then rm decimal_coord_list$$; fi
-if [ -f flux_list$$ ]; then rm flux_list$$; fi
-if [ -f sex_output ]; then rm sex_output; fi	
-if [ -f calib_data$$ ]; then rm calib_data$$; fi	
-
+if [ -d ./temp ]; then rm -r ./temp; fi
+if [ -f sxt_output ]; then rm sxt_output; fi
+if [ -f sxt_tmp ]; then rm sxt_tmp; fi
