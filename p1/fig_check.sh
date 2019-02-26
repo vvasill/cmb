@@ -33,7 +33,7 @@ do
 
 			### sources_info_extracting: coords and fluxes ###
 			#flux_coord_list: name, flux, flux_err, ra_h, dec_h
-			cat ./Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s_%s fr_%s fw_%s %s %s %s %s\n", $1, num, fr, fw, fr, fw, $6, $7, ($8*15.0), $9}' > $flux_coord_list
+			cat ./Planck_list | grep $fr'_' | grep $area_num | awk -v num=$i -v fr=$fr -v fw=$fw '{printf "%s_%s_%s fr_%s fw_%s %s %s %s %s\n", $1, num, fr, fr, fw, $6, $7, ($8*15.0), $9}' > $flux_coord_list
 			echo 'sources are available: '$( cat $flux_coord_list | wc -l )	
 
 			cat $flux_coord_list | while read line
@@ -43,8 +43,9 @@ do
 				source_name=${fc_str[0]}
 		
 				if [ "$mode" == "control" ]; then
-					echo 'source: '$source_name
-					eog './figs/'$source_name'.gif' & fig_pid=$!
+					echo 'source: '$source_name'_'$fw
+					convert -append './figs/'$source_name'_'$fw'.gif' './figs/'$source_name'_5.gif' out.jpg
+					eog out.jpg & fig_pid=$!
 		
 					echo "Is it a good source?"
 					read flag </dev/tty
@@ -57,8 +58,8 @@ do
 					flag='y'
 				fi
 			
-				awk -v flag=$flag '{printf "%s %s %s %s %s %s %s flag_%s\n", $1, $2, $3, $4, $5, $6, $7, flag}' $coord_line >> $flux_coord_list_controled
-				if [ "$flag" == "n" ]; then echo $source_name >> $skipped; fi	
+				awk -v flag=$flag -v fw=$fw '{printf "%s_%s %s %s %s %s %s %s flag_%s\n", $1, fw, $2, $3, $4, $5, $6, $7, flag}' $coord_line >> $flux_coord_list_controled
+				if [ "$flag" == "n" ]; then echo $source_name'_'$fw >> $skipped; fi	
 			done
 		done
 	done
@@ -66,3 +67,4 @@ done
 
 #empty_trash
 if [ -d ./temp ]; then rm -r ./temp; fi
+if [ -f out.jpg ]; then rm out.jpg; fi

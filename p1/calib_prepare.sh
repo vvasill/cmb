@@ -11,9 +11,6 @@ sigma=1.0
 BW_str=( $beamwidth )
 sxt_config='./sxt_config/config'	
 
-if [ ! -d ./out_data ]; then mkdir ./out_data; fi
-if [ ! -d ./temp ]; then mkdir ./temp; fi
-
 flux_coord_list_controled=./out_data/flux_coord_list_controled
 skipped=./out_data/skipped_names_1
 all=./out_data/all_sources

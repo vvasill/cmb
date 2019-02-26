@@ -9,15 +9,20 @@ beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077" #arcdeg
 #smoothing angle
 FWHM="0 5 35 60" #arcmin
 
-FREQ="100"
-beamwidth="0.16"
-FWHM="0 5 35 60"
+FREQ="217"
+beamwidth="0.083"
+FWHM="60"
 
 ### set project directory ###
 #home_path="/users/vasily/data"
 #home_path="/D/vasiliy/cmb"
 #home_path="/media/vasiliy/60Gb/cmb"
 home_path="/media/vasiliy/7236A2E636A2AB15/vasiliy/cmb_debug"
+
+if [ ! -d ./small_areas ]; then mkdir ./small_areas; fi
+if [ ! -d ./out_data ]; then mkdir ./out_data; fi
+if [ ! -d ./temp ]; then mkdir ./temp; fi
+if [ ! -d ./graphs ]; then mkdir ./graphs; fi
 
 ### mark in what area source is situated ###
 echo preparing...
@@ -31,10 +36,10 @@ echo small areas cutting...
 if [ "$1" == "a" ] 
 then
 	echo fig checking...
-	./fig_check.sh "$FREQ" "$FWHM" "$home_path" auto
+	#./fig_check.sh "$FREQ" "$FWHM" "$home_path" auto
 else
 	echo fig checking...
-	./fig_check.sh  "$FREQ" "$FWHM" "$home_path" control
+	#./fig_check.sh  "$FREQ" "$FWHM" "$home_path" control
 fi
 
 if [ "$1" == "a" ] 
