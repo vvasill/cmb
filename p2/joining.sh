@@ -4,7 +4,7 @@ FWHM=$1
 mode=$2
 
 echo "0 30 30 40 40 70 70 100 100 143 143 217 217" > freq_line
-if [ ! -f ./res ]; then mkdir ./res; fi
+
 if [ "$mode" == "T" ]
 then
 	infile='./match/T_calib_outfile'

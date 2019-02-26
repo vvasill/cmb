@@ -11,9 +11,8 @@ sigma=$5
 BW_str=( $beamwidth )
 factor=1.5
 
-check_dir='./match/'$sigma
-if [ ! -f $check_dir ]; then mkdir $check_dir; fi
 cd ./match
+temp_outfile=../temp/temp_outfile$$
 
 for fw in $FWHM
 do
@@ -60,17 +59,17 @@ do
 				ra=${str2[3]}
 				dec=${str2[4]}
 				
-				ra_l=$( echo $ra - $delta_small | bc -l )
-				ra_r=$( echo $ra + $delta_small | bc -l )
-				dec_l=$( echo $dec - $delta_small | bc -l )
-				dec_r=$( echo $dec + $delta_small | bc -l )
+				ra_l=$( echo $ra - $delta_small*0.5 | bc -l )
+				ra_r=$( echo $ra + $delta_small*0.5 | bc -l )
+				dec_l=$( echo $dec - $delta_small*0.5 | bc -l )
+				dec_r=$( echo $dec + $delta_small*0.5 | bc -l )
 				
 				#checking, if source (from sources on big areas) is included in small_area (across spot on SMICA map)
-				awk -v ra=$ra -v dec=$dec -v ra_l=$ra_l -v ra_r=$ra_r -v dec_l=$dec_l -v dec_r=$dec_r -v spot_num=$spot_num '{if ($4 > ra_l && $4 < ra_r && $5 > dec_l && $5 < dec_r) {printf "%s %s %s %s %s\n", spot_num, $2, $3, ra, dec}}' $infile_1 >> temp_outfile
+				awk -v ra=$ra -v dec=$dec -v ra_l=$ra_l -v ra_r=$ra_r -v dec_l=$dec_l -v dec_r=$dec_r -v spot_num=$spot_num '{if ($4 > ra_l && $4 < ra_r && $5 > dec_l && $5 < dec_r) {printf "%s %s %s %s %s\n", spot_num, $2, $3, ra, dec}}' $infile_1 >> $temp_outfile
 									
-				if [ -s temp_outfile ]; then
+				if [ -f $temp_outfile ]; then
 					#some output_file_modifications: merging if more than one peaks on one spot
-					cat temp_outfile | ( 
+					cat $temp_outfile | ( 
 						t=0
 						t_err=0
 						while read temp_line
@@ -104,4 +103,4 @@ do
 done
 
 #empty_trash	
-if [ -f temp_outfile ]; then rm temp_outfile; fi
+if [ -f $temp_outfile ]; then rm $temp_outfile; fi

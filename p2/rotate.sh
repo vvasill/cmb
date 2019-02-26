@@ -3,7 +3,6 @@
 FWHM=$1
 mode=$2
 home_path=$3
-if [ ! -f graphs ]; then mkdir graphs; fi
 
 for fw in $FWHM
 do
@@ -40,5 +39,6 @@ do
 	fi
 done
 
+#empty_trash
 rm tmp2
 rm tmp3

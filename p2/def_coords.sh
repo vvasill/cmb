@@ -2,19 +2,18 @@
 
 FWHM=$1
 home_path=$2
+sigma=$3
 
 delta=20.0
-sigma=1.0
 
-if [ ! -f ./def_coords ]; then mkdir ./def_coords; fi
 cd ./def_coords
-if [ ! -f ./source_lists ]; then mkdir ./source_lists; fi
+if [ ! -d ./source_lists ]; then mkdir ./source_lists; fi
 
 for fw in $FWHM
 do
 	case $fw in
 		0)
-			MAP=/home/vo/Planck/DR2/m_smica2.01.fts;;
+			MAP=$home_path'/maps/m_smica2.01.fts';;
 		*)
 			MAP=$home_path'/maps/smoothed_maps/smica_'$fw'_smooth_map.fts';;
 	esac
@@ -28,16 +27,16 @@ do
 	do 
 		str1=( $areas_line )
 		i=${str1[0]}
-		output_file='./source_lists/big_area_sources_'$i'_'$fw
+		outfile='./source_lists/big_area_sources_'$i'_'$fw
 		big_area_map='q'$i'_'$fw'.fts'	
 
 		echo $i $fw	
 	
 		#SExtractor processing
-		sex $big_area_map -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma 
+		sextractor $big_area_map -c ../sex_config/config -DETECT_THRESH $sigma -ANALYSIS_THRESH $sigma 
 		sed -i -e 's/+//g' sex_output
 		sed -i -E 's/([+-]?[0-9.]+)[eE]\+?(-?)([0-9]+)/(\1*10^\2\3)/g' sex_output 
-		cat sex_output > $output_file
+		cat sex_output > $outfile
 	done
 done
 
