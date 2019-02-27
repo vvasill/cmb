@@ -10,7 +10,8 @@ delta=20.0
 BW_str=( $beamwidth )
 
 cd ./big_areas
-if [ ! -d ./source_lists ]; then mkdir ./source_lists; fi
+check_dir='./source_lists/'$sigma
+if [ ! -d $check_dir ]; then mkdir $check_dir; fi
 
 #loop_on_freq
 count=0
@@ -35,7 +36,7 @@ do
 			ra_c=${str1[1]}	
 			dec_c=${str1[2]}
 			MAP='q'$i'_'$fr'_'$fw'_'$delta'.fts'
-			outfile='./source_lists/a_big_area_sources_'$i'_'$fr'_'$fw
+			outfile='./source_lists/'$sigma'/A_big_area_sources_'$i'_'$fr'_'$fw
 			> $outfile
 
 			name=$i'_'$fr'_'$fw

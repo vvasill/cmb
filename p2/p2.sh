@@ -10,12 +10,11 @@ beamwidth="0.54 0.45 0.22 0.16 0.12 0.083 0.082 0.080 0.077" #arcdeg
 FWHM="0 5 35 60"
 #threshold for SExtractor
 sigma_line="1.0"
-FREQ="030"
 
 ### set project directory ###
 #home_path="/D/vasiliy/cmb"
-#home_path="/media/vasiliy/7236A2E636A2AB15/vasiliy/cmb_debug"
-home_path="/media/vasiliy/60Gb/cmb_debug"
+home_path="/media/vasiliy/7236A2E636A2AB15/vasiliy/cmb_debug"
+#home_path="/media/vasiliy/60Gb/cmb_debug"
 
 if [ ! -d ./temp ]; then mkdir ./temp; fi
 if [ ! -d ./big_areas ]; then mkdir ./big_areas; fi
@@ -43,55 +42,81 @@ echo correlating...
 for sigma in $sigma_line
 do
 	### extract sources from freq-map ###
-	if [ "$1" == "a" ] 
+	if [ "$1" == "t" ] 
 	then
-		echo "alternartive (max amplitude) source extracting..."
-		#./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth" "$sigma" #python extracting
-		#./as_extracting.sh "$FREQ" "$FWHM" "$sigma" #sextractor extracting
-	else
+		echo "amplitude source extracting..."
+		#./t_extracting.sh "$FREQ" "$FWHM" "$sigma" #sextractor extracting
+	fi
+	if [ "$1" == "test" ] 
+	then
+		echo "test (python) amplitude source extracting..."
+		./a_extracting.sh "$FREQ" "$FWHM" "$beamwidth" "$sigma" #python extracting
+	fi
+	if [ "$1" == "s" ] 
+	then
 		echo "source extracting..."
 		#./s_extracting.sh "$FREQ" "$FWHM" "$sigma"
 	fi
 
 	### match spots and sources ###
-	if [ "$1" == "a" ] 
+	if [ "$1" == "t" ] 
 	then
 		echo matching...
 		./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" T "$sigma"
-	else
+	fi
+	if [ "$1" == "test" ] 
+	then
+		echo matching...
+		./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" A "$sigma"
+	fi
+	if [ "$1" == "s" ] 
+	then
 		echo matching...
 		./spot_matching.sh "$FREQ" "$FWHM" "$beamwidth" S "$sigma"
 	fi
 
-	if [ "$1" == "a" ] 
+	if [ "$1" == "t" ] 
 	then
 		echo calibrating...
-	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" T "$sigma"
-	else
+		./calibrating.sh "$FREQ" "$FWHM" "$home_path" T "$sigma"
+	fi
+	if [ "$1" == "test" ] 
+	then
 		echo calibrating...
-	#	./calibrating.sh "$FREQ" "$FWHM" "$home_path" S "$sigma"
+		./calibrating.sh "$FREQ" "$FWHM" "$home_path" A "$sigma"
+	fi
+	if [ "$1" == "s" ] 
+	then
+		echo calibrating...
+		./calibrating.sh "$FREQ" "$FWHM" "$home_path" S "$sigma"
 	fi
 
 	### joining ###
-	if [ "$1" == "a" ] 
+	if [ "$1" == "t" ] 
 	then
 		echo joining...	
-	#	./joining.sh "$FWHM" T
-	else
+		./joining.sh "$FWHM" T
+	fi
+	if [ "$1" == "s" ] 
+	then
 		echo joining...
-	#	./joining.sh "$FWHM" S
+		./joining.sh "$FWHM" S
 	fi
 
 	### rotating and automatic graphing ###
-	if [ "$1" == "a" ] 
+	if [ "$1" == "t" ] 
 	then
 		echo rotating and graphing...
-	#	./rotate_graph.sh "$FWHM" T "$home_path"
-	else
+		./rotate_graph.sh "$FWHM" T "$home_path"
+	fi
+	if [ "$1" == "s" ] 
+	then
 		echo rotating and graphing...
-	#	./rotate_graph.sh "$FWHM" S "$home_path"
+		./rotate_graph.sh "$FWHM" S "$home_path"
 	fi
 done
+
+shutdown
 
 ### plot graphs with axes control ###
 #./graph_man.sh

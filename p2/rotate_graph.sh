@@ -4,7 +4,6 @@ FWHM=$1
 mode=$2
 home_path=$3
 
-if [ ! -f graphs ]; then mkdir graphs; fi
 if [ "$mode" == "T" ]
 then
 	#in
