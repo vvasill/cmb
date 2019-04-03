@@ -39,16 +39,22 @@ do
 				delta_small=$( echo $fw_d*$factor | bc -l)
 			fi
 			
-			if [ "$mode" == "S" ]
-			then 
-				infile_1='../big_areas/source_lists/'$sigma'/S_big_area_sources_'$i'_'$fr'_'$fw
-				outfile='S_outfile_'$i'_'$fr'_'$fw'_'$sigma
-			fi 
 			if [ "$mode" == "T" ]
 			then
 				infile_1='../big_areas/source_lists/'$sigma'/T_big_area_sources_'$i'_'$fr'_'$fw
 				outfile='T_outfile_'$i'_'$fr'_'$fw'_'$sigma
 			fi
+			if [ "$mode" == "A" ]
+			then 
+				infile_1='../big_areas/source_lists/'$sigma'/A_big_area_sources_'$i'_'$fr'_'$fw
+				outfile='A_outfile_'$i'_'$fr'_'$fw'_'$sigma
+			fi 
+			if [ "$mode" == "S" ]
+			then 
+				infile_1='../big_areas/source_lists/'$sigma'/S_big_area_sources_'$i'_'$fr'_'$fw
+				outfile='S_outfile_'$i'_'$fr'_'$fw'_'$sigma
+			fi 
+
 			> $outfile
 			echo $i'_'$fr'_'$fw
 		
@@ -80,17 +86,23 @@ do
 						dt=${str_sl[1]}
 						dt_err=${str_sl[2]}	
 
-						if [ "$mode" == "S" ]
-						then	
-							### sum all peaks ###
-							t=$( echo $t + $dt | bc )
-							t_err=$( echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
-						fi
 						if [ "$mode" == "T" ]
 						then	
 							### find maximum ###
 							if (( $( echo $dt '>' $t | bc -l ) )); then t=$dt; fi
 							t_err=$dt_err
+						fi
+						if [ "$mode" == "A" ]
+						then	
+							### find maximum ###
+							if (( $( echo $dt '>' $t | bc -l ) )); then t=$dt; fi
+							t_err=$dt_err
+						fi
+						if [ "$mode" == "S" ]
+						then	
+							### sum all peaks ###
+							t=$( echo $t + $dt | bc )
+							t_err=$( echo "sqrt($t_err*$t_err + $dt_err*$dt_err)" | bc -l )
 						fi
 
 					done	
@@ -102,8 +114,9 @@ do
 					fi
 				)	
 			done
-		done
+		echo $count $delta_small
 		(( count++ ))
+		done
 	done
 done
 

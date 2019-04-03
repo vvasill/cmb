@@ -8,7 +8,7 @@ from coord_conv import gal2equ
 areas_in = np.loadtxt(sys.argv[1])
 delta = float(sys.argv[2])*0.5
 
-areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]+1))
+areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]+2))
 
 for i in range(0, areas_in.shape[0]):
 	areas_out[i,0] = areas_in[i,0]

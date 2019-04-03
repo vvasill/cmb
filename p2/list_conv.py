@@ -7,7 +7,7 @@ from coord_conv import gal2equ
 
 if (sys.argv[2] == "1"):
 	areas_in = np.loadtxt(sys.argv[1])
-	areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]+3))
+	areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]+4))
 
 	for i in range(0, areas_in.shape[0]):
 		areas_out[i,0] = areas_in[i,0]
@@ -24,7 +24,7 @@ if (sys.argv[2] == "1"):
 
 if (sys.argv[2] == "2"):
 	areas_in = np.loadtxt(sys.argv[1])
-	areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]-1))	
+	areas_out = np.zeros((areas_in.shape[0], areas_in.shape[1]))	
 
 	for i in range(0, areas_in.shape[0]):
 		areas_out[i,0] = areas_in[i,0]

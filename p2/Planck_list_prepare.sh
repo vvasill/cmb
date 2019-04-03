@@ -7,7 +7,7 @@ cat $home_path'/Planck.cats' | grep -v '^#' | awk 'function sgn(x){ if (x>0) ret
 
 delta=20.0
 
-#getting list without comments in equ coord
+#getting list in equ coord
 cat $home_path'/big_areas_list' | grep -v '^#' > actual_list
 python Planck_list_prepare.py actual_list $delta
 python list_conv.py actual_list 1
@@ -15,8 +15,8 @@ python list_conv.py actual_list 2
 if [ -f actual_list ]; then rm actual_list; fi
 
 #Planck_list with areas marks generation
-cat big_areas_list_equ_bound | grep -v '^#' | while read line; do    
-
+cat big_areas_list_equ_bound | grep -v '^#' | while read line
+do    
     str=( $line )
 	num=${str[0]}
 	ra_l=${str[1]}
