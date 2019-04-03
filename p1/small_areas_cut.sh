@@ -70,6 +70,7 @@ do
 			done
 		done
 	done
+	(( count++ ))
 done
 
 #empty_trash

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### This script try to calibrate signal, which we can extract from PLANCK-maps, from integral temperature to flux ###
+### This script try to calibrate signal, which we can extract from PLANCK-maps, from integral temperature to flux. Version with visual controlling. March 2019 ###
 
 ### set parameters of maps ###
 #map frequences
